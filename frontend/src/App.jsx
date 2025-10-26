@@ -1,48 +1,48 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import { Toaster } from 'react-hot-toast';
-import { HelmetProvider } from 'react-helmet-async';
-import { CookiesProvider } from 'react-cookie';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { Toaster } from "react-hot-toast";
+import { HelmetProvider } from "react-helmet-async";
+import { CookiesProvider } from "react-cookie";
 
 // Context providers
-import { AuthProvider } from './contexts/AuthContext';
-import { CartProvider } from './contexts/CartContext';
-import { WishlistProvider } from './contexts/WishlistContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Layout components
-import Layout from './components/Layout/Layout';
-import AdminLayout from './components/Layout/AdminLayout';
+import Layout from "./components/Layout/Layout";
+import AdminLayout from "./components/Layout/AdminLayout";
 
 // Pages
-import Home from './pages/Home.jsx';
-import Shop from './pages/Shop.jsx';
+import Home from "./pages/Home.jsx";
+import Shop from "./pages/Shop.jsx";
 //import ProductDetail from './pages/ProductDetail.jsx';
 //import Cart from './pages/Cart.jsx';
 //import Wishlist from './pages/Wishlist.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 //import Account from './pages/Account.jsx';
-import About from './pages/About.jsx';
-import Checkout from './pages/Checkout.jsx';
-import OrderConfirmation from './pages/OrderConfirmation.jsx';
-import OrderHistory from './pages/OrderHistory.jsx';
+import About from "./pages/About.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import OrderConfirmation from "./pages/OrderConfirmation.jsx";
+import OrderHistory from "./pages/OrderHistory.jsx";
 
 // Admin Pages
-import AdminDashboard from './pages/admin/Dashboard.jsx';
-import AdminProducts from './pages/admin/Products.jsx';
-import AdminOrders from './pages/admin/Orders.jsx';
-import AdminUsers from './pages/admin/Users.jsx';
-import AdminCategories from './pages/admin/Categories.jsx';
-import AdminSettings from './pages/admin/Settings.jsx';
+import AdminDashboard from "./pages/admin/Dashboard.jsx";
+import AdminProducts from "./pages/admin/Products.jsx";
+import AdminOrders from "./pages/admin/Orders.jsx";
+import AdminUsers from "./pages/admin/Users.jsx";
+import AdminCategories from "./pages/admin/Categories.jsx";
+import AdminSettings from "./pages/admin/Settings.jsx";
 
 // Protected Route component
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 // Styles
-import './App.css';
+import "./App.css";
 
 // Create a client
 const queryClient = new QueryClient({
