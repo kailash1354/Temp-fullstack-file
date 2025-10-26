@@ -1,5 +1,9 @@
-import * as nodemailer from "nodemailer";
 import { logger } from "../middleware/errorHandler.js";
+
+// Use require for nodemailer to avoid ES module issues
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const nodemailer = require('nodemailer');
 
 // Create transporter
 const createTransporter = () => {
@@ -69,15 +73,15 @@ const emailTemplates = {
     `,
     text: `
       Welcome to Luxe Heritage!
-      
+
       Hi ${data.firstName},
-      
+
       Thank you for joining Luxe Heritage. Please verify your email address to complete your registration.
-      
+
       Click here to verify: ${data.verificationUrl}
-      
+
       This link will expire in 24 hours.
-      
+
       If you didn't create an account, please ignore this email.
     `,
   }),
@@ -123,15 +127,15 @@ const emailTemplates = {
     `,
     text: `
       Password Reset Request
-      
+
       Hi ${data.firstName},
-      
+
       We received a request to reset your password. Click the link below to create a new password:
-      
+
       ${data.resetUrl}
-      
+
       This link will expire in 30 minutes.
-      
+
       If you didn't request a password reset, please ignore this email. Your password will remain unchanged.
     `,
   }),
@@ -162,14 +166,14 @@ const emailTemplates = {
               <h2>Order Confirmation</h2>
               <p>Hi ${data.firstName},</p>
               <p>Thank you for your order! We're preparing your items for shipment.</p>
-              
+
               <div class="order-details">
                 <h3>Order Details</h3>
                 <p><strong>Order Number:</strong> ${data.orderNumber}</p>
                 <p><strong>Total:</strong> $${data.total}</p>
                 <p><strong>Estimated Delivery:</strong> ${data.estimatedDelivery}</p>
               </div>
-              
+
               <p>We'll send you another email when your order ships.</p>
             </div>
             <div class="footer">
@@ -207,14 +211,14 @@ const emailTemplates = {
               <h2>Your Order Has Shipped!</h2>
               <p>Hi ${data.firstName},</p>
               <p>Great news! Your order has been shipped and is on its way to you.</p>
-              
+
               <div class="tracking-info">
                 <h3>Tracking Information</h3>
                 <p><strong>Order Number:</strong> ${data.orderNumber}</p>
                 <p><strong>Tracking Number:</strong> ${data.trackingNumber}</p>
                 <p><strong>Carrier:</strong> ${data.carrier}</p>
               </div>
-              
+
               <p>You can track your package using the tracking number provided above.</p>
             </div>
             <div class="footer">

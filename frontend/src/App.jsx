@@ -59,11 +59,11 @@ function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <CookiesProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <Router>
+          <Router>
+            <AuthProvider>
+              <ThemeProvider>
+                <CartProvider>
+                  <WishlistProvider>
                     <div className="App">
                       <Routes>
                         {/* Public Routes */}
@@ -71,72 +71,86 @@ function App() {
                           <Route index element={<Home />} />
                           <Route path="shop" element={<Shop />} />
                           <Route path="shop/:category" element={<Shop />} />
-                        {/*  <Route path="product/:slug" element={<ProductDetail />} />
+                          {/*  <Route path="product/:slug" element={<ProductDetail />} />
                           <Route path="cart" element={<Cart />} />
                           <Route path="wishlist" element={<Wishlist />} /> */}
                           <Route path="about" element={<About />} />
                           <Route path="login" element={<Login />} />
                           <Route path="register" element={<Register />} />
-                          
+
                           {/* Protected Routes */}
                           {/* <Route path="account" element={
                             <ProtectedRoute>
                               <Account />
                             </ProtectedRoute>
                           } /> */}
-                          <Route path="checkout" element={
-                            <ProtectedRoute>
-                              <Checkout />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="order-confirmation/:orderId" element={
-                            <ProtectedRoute>
-                              <OrderConfirmation />
-                            </ProtectedRoute>
-                          } />
-                          <Route path="orders" element={
-                            <ProtectedRoute>
-                              <OrderHistory />
-                            </ProtectedRoute>
-                          } />
+                          <Route
+                            path="checkout"
+                            element={
+                              <ProtectedRoute>
+                                <Checkout />
+                              </ProtectedRoute>
+                            }
+                          />
+                          <Route
+                            path="order-confirmation/:orderId"
+                            element={
+                              <ProtectedRoute>
+                                <OrderConfirmation />
+                              </ProtectedRoute>
+                            }
+                          />
+                          <Route
+                            path="orders"
+                            element={
+                              <ProtectedRoute>
+                                <OrderHistory />
+                              </ProtectedRoute>
+                            }
+                          />
                         </Route>
 
                         {/* Admin Routes */}
-                        <Route path="/admin" element={
-                          <AdminRoute>
-                            <AdminLayout />
-                          </AdminRoute>
-                        }>
+                        <Route
+                          path="/admin"
+                          element={
+                            <AdminRoute>
+                              <AdminLayout />
+                            </AdminRoute>
+                          }
+                        >
                           <Route index element={<AdminDashboard />} />
                           <Route path="products" element={<AdminProducts />} />
                           <Route path="orders" element={<AdminOrders />} />
                           <Route path="users" element={<AdminUsers />} />
-                          <Route path="categories" element={<AdminCategories />} />
+                          <Route
+                            path="categories"
+                            element={<AdminCategories />}
+                          />
                           <Route path="settings" element={<AdminSettings />} />
                         </Route>
 
                         {/* 404 Route */}
                         <Route path="*" element={<Home />} />
                       </Routes>
-                      
+
                       <Toaster
                         position="top-right"
                         toastOptions={{
                           duration: 4000,
                           style: {
-                            background: '#363636',
-                            color: '#fff',
+                            background: "#363636",
+                            color: "#fff",
                           },
                         }}
                       />
                     </div>
-                  </Router>
-                </WishlistProvider>
-              </CartProvider>
-            </ThemeProvider>
-          </AuthProvider>
+                  </WishlistProvider>
+                </CartProvider>
+              </ThemeProvider>
+            </AuthProvider>
+          </Router>
         </CookiesProvider>
-        
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </HelmetProvider>
