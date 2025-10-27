@@ -96,18 +96,24 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12"
+        >
+          <h1 className="text-5xl font-display font-bold text-gray-900 dark:text-white mb-4">
             {category ? `${category.charAt(0).toUpperCase() + category.slice(1)} Collection` : 'All Products'}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Discover our curated selection of luxury fashion and premium lifestyle products.
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl leading-relaxed">
+            Discover our curated selection of luxury fashion and premium lifestyle products,
+            each piece carefully selected to bring elegance and sophistication to your wardrobe.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar Filters */}
           <div className="lg:w-1/4">
             <ProductFilters
@@ -120,19 +126,24 @@ const Shop = () => {
           {/* Main Content */}
           <div className="lg:w-3/4">
             {/* Sort and View Options */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0"
+            >
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-lg text-gray-600 dark:text-gray-400">
                   {pagination.total || 0} products found
                 </span>
               </div>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 {/* Sort Options */}
                 <select
                   value={filters.sort}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-luxury-gold focus:border-transparent transition-all duration-300 text-base shadow-soft"
                 >
                   <option value="-createdAt">Newest</option>
                   <option value="createdAt">Oldest</option>
@@ -143,77 +154,90 @@ const Shop = () => {
                 </select>
 
                 {/* View Mode Toggle */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-soft">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded ${
+                    className={`p-3 rounded transition-all duration-300 ${
                       viewMode === 'grid'
-                        ? 'bg-black text-white'
-                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        ? 'bg-luxury-gold text-white shadow-lg'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-luxury-gold hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                     aria-label="Grid view"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                     </svg>
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded ${
+                    className={`p-3 rounded transition-all duration-300 ${
                       viewMode === 'list'
-                        ? 'bg-black text-white'
-                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        ? 'bg-luxury-gold text-white shadow-lg'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-luxury-gold hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                     aria-label="List view"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 8a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 16a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                     </svg>
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Products Grid/List */}
             {products.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                className="text-center py-20"
+              >
+                <h3 className="text-3xl font-display font-semibold text-gray-900 dark:text-white mb-4">
                   No products found
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Try adjusting your filters or search terms.
+                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                  Try adjusting your filters or search terms to find what you're looking for.
                 </p>
-              </div>
+              </motion.div>
             ) : (
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
                 className={
                   viewMode === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
-                    : 'space-y-6'
+                    ? 'product-grid-luxury'
+                    : 'space-y-8'
                 }
               >
                 {products.map((product, index) => (
                   <motion.div
                     key={product._id}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.1, duration: 0.6 }}
                   >
                     <ProductCard product={product} />
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-12">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-16"
+              >
                 <Pagination
                   currentPage={filters.page}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
                 />
-              </div>
+              </motion.div>
             )}
           </div>
         </div>

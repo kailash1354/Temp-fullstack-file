@@ -1,0 +1,4 @@
+{
+  "tailwindCSS.version": "3",
+  "tailwindCSS.experimental.configFile": "tailwind.config.js"
+}

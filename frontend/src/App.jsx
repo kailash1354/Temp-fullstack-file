@@ -68,6 +68,7 @@ function App() {
                 <CartProvider>
                   <WishlistProvider>
                     <div className="App">
+                    {/* <div className="min-h-screen bg-primary-50 text-gray-900 font-body transition-colors duration-300"> */}
                       <Routes>
                         {/* Public Routes */}
                         <Route path="/" element={<Layout />}>
@@ -146,6 +147,14 @@ function App() {
                             color: "#fff",
                           },
                         }}
+                      />
+                      {/* <Toaster
+                        position="top-right"
+                        toastOptions={{
+                          duration: 4000,
+                          className:
+                            "bg-neutral-800 text-white px-4 py-2 rounded-xl shadow-md border border-neutral-700",
+                        }} */}
                       />
                     </div>
                   </WishlistProvider>
