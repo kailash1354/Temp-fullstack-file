@@ -223,3 +223,79 @@
   *:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; box-shadow: 0 0 0 4px rgba(var(--accent), 0.2); }
   input:focus-visible, textarea:focus-visible, select:focus-visible { border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgba(var(--accent), 0.2); }
 }
+
+
+
+/* ============================================= */
+/* 7. Admin Panel Specific Styles (Using Gold Theme) */
+/* ============================================= */
+@layer components {
+  /* Admin Panel specific fonts */
+  .admin-layout h1, .admin-layout h2, .admin-layout h3, .admin-layout h4,
+  .admin-card h1, .admin-card h2, .admin-card h3, .admin-card h4 {
+     font-family: 'Inter', system-ui, sans-serif !important;
+     font-weight: 600 !important;
+     color: rgb(var(--text)) !important;
+  }
+
+  /* Admin Panel Card Style (uses main site surface/border) */
+  .admin-card, .admin-layout .MuiPaper-root {
+    background-color: rgb(var(--surface)) !important;
+    border: 1px solid rgb(var(--border)) !important;
+    box-shadow: 0 1px 3px rgba(var(--shadow), 2) !important;
+    border-radius: 8px !important;
+    color: inherit;
+  }
+  .dark .admin-card, .dark .admin-layout .MuiPaper-root {
+    background-color: rgb(var(--card)) !important; /* Use dark card bg */
+  }
+
+  /* Admin Buttons will use .btn-luxury-primary (main gold) */
+  /* and .btn-luxury-secondary (main secondary) */
+
+  /* Admin Sidebar Active State (Gold) */
+  .sidebar-active {
+    background-color: rgb(var(--highlight)) !important;
+    color: rgb(var(--accent)) !important; /* Use main accent color */
+    font-weight: 600;
+  }
+  .sidebar-active svg {
+    color: rgb(var(--accent)) !important; /* Use main accent color */
+  }
+  .dark .sidebar-active {
+    background-color: rgb(var(--accent)) !important;
+    color: rgb(var(--btn-text)) !important; /* Use dark btn-text */
+  }
+  .dark .sidebar-active svg {
+    color: rgb(var(--btn-text)) !important; /* Use dark btn-text */
+  }
+  
+  /* Chart Colors - Light Mode (Vibrant Palette) */
+  :root {
+    --chart-color-1: 150 116 58; /* accent-2 */
+    --chart-color-2: 59 130 246; /* Blue-500 */
+    --chart-color-3: 139 92 246; /* Violet-500 */
+    --chart-color-4: 236 72 153; /* Pink-500 */
+    --chart-color-5: 16 185 129; /* Emerald-500 */
+    --chart-grid: 229 231 235; /* gray-200 */
+    
+    /* Semantic Colors (for status badges etc.) */
+    --success: 22 163 74;    /* green-600 */
+    --warning: 245 158 11;   /* amber-500 */
+    --info: 59 130 246;     /* blue-500 */
+    --error: 220 38 38;     /* red-600 */
+  }
+
+  /* Chart Colors - Dark Mode */
+  .dark {
+    --chart-color-1: 214 181 92; /* accent */
+    --chart-color-2: 96 165 250; /* Blue-400 */
+    --chart-color-3: 167 139 250;/* Violet-400 */
+    --chart-color-4: 244 114 182;/* Pink-400 */
+    --chart-color-5: 52 211 153; /* Emerald-400 */
+    --chart-grid: 70 70 70;
+  
+    /* Semantic Colors (Lighter) */
+    --success: 74 222 128; --warning: 251 191 36; --info: 96 165 250; --error: 248 113 113;
+  }
+}
