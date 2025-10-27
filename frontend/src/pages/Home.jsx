@@ -1,123 +1,129 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useQuery } from 'react-query';
-import productsAPI from '../api/products';
-import {
-  ChevronRight,
-  Star,
-  ShoppingBag,
-  Heart,
-  Eye,
-} from 'lucide-react';
-import HeroSection from '../components/Home/HeroSection';
-import ProductCard from '../components/Products/ProductCard';
-import LoadingSpinner from '../components/UI/LoadingSpinner';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useQuery } from "react-query";
+import productsAPI from "../api/products";
+import { ChevronRight, Star, ShoppingBag, Heart, Eye } from "lucide-react";
+import HeroSection from "../components/Home/HeroSection";
+import ProductCard from "../components/Products/ProductCard";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-
   // Fetch featured products
   const { data: featuredData, isLoading: featuredLoading } = useQuery(
-    'featured-products',
-    () => productsAPI.getProducts({ featured: true, limit: 8 })
+    "featured-products",
+    () => productsAPI.getProducts({ featured: true, limit: 8 }),
+    { staleTime: 1000 * 60 * 5 } // Cache for 5 mins
   );
 
   // Fetch new arrivals
   const { data: newArrivalsData, isLoading: newArrivalsLoading } = useQuery(
-    'new-arrivals',
-    () => productsAPI.getProducts({ sort: '-createdAt', limit: 8 })
+    "new-arrivals",
+    () => productsAPI.getProducts({ sort: "-createdAt", limit: 8 }),
+    { staleTime: 1000 * 60 * 5 } // Cache for 5 mins
   );
 
-  useEffect(() => {
-    if (featuredData?.data?.products) {
-      setFeaturedProducts(featuredData.data.products);
-    }
-  }, [featuredData]);
+  const featuredProducts = featuredData?.data?.products || [];
+  const newArrivals = newArrivalsData?.data?.products || [];
 
   const categories = [
     {
-      name: 'Women',
-      image: '/images/women-fashion.jpg',
-      path: '/shop/women',
+      name: "Women",
+      image: "/images/women-fashion.jpg",
+      path: "/shop/women",
       count: 124,
     },
     {
-      name: 'Men',
-      image: '/images/men-fashion.jpg',
-      path: '/shop/men',
+      name: "Men",
+      image: "/images/men-fashion.jpg",
+      path: "/shop/men",
       count: 98,
     },
     {
-      name: 'Accessories',
-      image: '/images/accessories.jpg',
-      path: '/shop/accessories',
+      name: "Accessories",
+      image: "/images/accessories.jpg",
+      path: "/shop/accessories",
       count: 76,
     },
     {
-      name: 'Shoes',
-      image: '/images/shoes.jpg',
-      path: '/shop/shoes',
+      name: "Shoes",
+      image: "/images/shoes.jpg",
+      path: "/shop/shoes",
       count: 54,
     },
   ];
 
   const stats = [
-    { number: '10K+', label: 'Happy Customers' },
-    { number: '500+', label: 'Premium Products' },
-    { number: '50+', label: 'Luxury Brands' },
-    { number: '24/7', label: 'Customer Support' },
+    { number: "10K+", label: "Happy Customers" },
+    { number: "500+", label: "Premium Products" },
+    { number: "50+", label: "Luxury Brands" },
+    { number: "24/7", label: "Customer Support" },
   ];
 
-  if (featuredLoading || newArrivalsLoading) {
-    return <LoadingSpinner />;
-  }
+  // Combine loading states for clarity
+  const isLoading = featuredLoading || newArrivalsLoading;
 
   return (
+    // Body background set by theme.css
     <div className="min-h-screen">
-      {/* Hero Section */}
       <HeroSection />
 
-      {/* Featured Categories */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      {/* Featured Categories - Removed explicit bg-white/dark:bg-gray-900 */}
+      <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+          <motion.div // Added motion for entrance animation
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12 md:mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              {" "}
+              {/* Use text-primary */}
               Shop by Category
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Discover our curated collections of luxury fashion and premium lifestyle products.
+            <p className="text-lg text-muted max-w-2xl mx-auto">
+              {" "}
+              {/* Use text-muted */}
+              Discover our curated collections of luxury fashion and premium
+              lifestyle products.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {categories.map((category, index) => (
               <motion.div
                 key={category.name}
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                whileInView={{ opacity: 1, y: 0 }} // Animate when in view
+                viewport={{ once: true, amount: 0.2 }} // Trigger animation once
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 aspect-[4/3]" // Use aspect ratio
               >
-                <div className="aspect-w-3 aspect-h-4">
+                {/* Image Container */}
+                <div className="absolute inset-0">
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-opacity duration-300" />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent group-hover:from-black/70 transition-opacity duration-300" />
                 </div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-                  <h3 className="text-2xl font-display font-bold mb-2">
-                    {category.name}
-                  </h3>
-                  <p className="text-sm mb-4">{category.count} Products</p>
+                {/* Content positioned at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
+                  <h3 className="text-2xl font-bold mb-1">{category.name}</h3>
+                  <p className="text-sm text-gray-200 mb-3">
+                    {category.count} Products
+                  </p>
                   <Link
                     to={category.path}
-                    className="inline-flex items-center px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors"
+                    // Adjusted button style for visibility on image
+                    className="inline-flex items-center px-4 py-2 bg-white/90 text-black text-sm font-semibold rounded-md hover:bg-white transition-colors group/btn"
                   >
                     Shop Now
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </motion.div>
@@ -126,107 +132,155 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      {/* Featured Products - Removed bg-gray-50/dark:bg-gray-800, added bg-highlight */}
+      <section className="py-16 md:py-24 bg-highlight">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12 md:mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              {" "}
+              {/* Use text-primary */}
               Featured Products
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted max-w-2xl mx-auto">
+              {" "}
+              {/* Use text-muted */}
               Handpicked selection of our most popular and exclusive items.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product, index) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {featuredProducts.map((product, index) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* New Arrivals */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      {/* New Arrivals - Removed explicit bg-white/dark:bg-gray-900 */}
+      <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12 md:mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              {" "}
+              {/* Use text-primary */}
               New Arrivals
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Be the first to discover our latest additions to the collection.
+            <p className="text-lg text-muted max-w-2xl mx-auto">
+              {" "}
+              {/* Use text-muted */}
+              Be the first to discover our latest additions.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivalsData?.data?.products?.map((product, index) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {newArrivals.map((product, index) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ delay: index * 0.1 + 0.1, duration: 0.5 }} // Stagger slightly differently
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-black text-white">
+      {/* Stats Section - Changed to bg-surface */}
+      <section className="py-16 bg-surface text-primary">
+        {" "}
+        {/* Use bg-surface */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="text-center"
               >
-                <h3 className="text-4xl font-display font-bold mb-2">
+                <h3 className="text-3xl md:text-4xl font-bold mb-2">
+                  {" "}
+                  {/* Font uses heading style */}
                   {stat.number}
                 </h3>
-                <p className="text-gray-300">{stat.label}</p>
+                <p className="text-muted">{stat.label}</p>{" "}
+                {/* Use text-muted */}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      {/* Newsletter Section - Use bg-highlight */}
+      <section className="py-16 md:py-24 bg-highlight">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-xl mx-auto text-center" /* Slightly narrower */
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
               Stay in Style
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Subscribe to our newsletter and be the first to know about new arrivals,
-              exclusive offers, and fashion trends.
+            <p className="text-muted mb-8 text-lg">
+              Subscribe for exclusive offers and updates.
             </p>
-            <form className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-              />
+            <form className="flex flex-col sm:flex-row gap-3 items-stretch">
+              <div className="relative flex-1">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="input-luxury w-full !rounded-md" // Updated radius
+                  aria-label="Email address for newsletter"
+                />
+              </div>
               <button
                 type="submit"
-                className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                className="btn-luxury btn-luxury-primary !rounded-md" // Updated radius
               >
                 Subscribe
               </button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>

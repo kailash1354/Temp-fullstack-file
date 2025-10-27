@@ -155,7 +155,6 @@ function App() {
                           className:
                             "bg-neutral-800 text-white px-4 py-2 rounded-xl shadow-md border border-neutral-700",
                         }} */}
-                      />
                     </div>
                   </WishlistProvider>
                 </CartProvider>

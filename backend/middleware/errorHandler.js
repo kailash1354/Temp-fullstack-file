@@ -1,4 +1,6 @@
 import winston from 'winston';
+import { validationResult } from "express-validator";
+
 
 // Configure Winston logger
 const logger = winston.createLogger({

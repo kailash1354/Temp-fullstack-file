@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useCart } from '../../contexts/CartContext';
-import { useWishlist } from '../../contexts/WishlistContext';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, NavLink } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
+import { useWishlist } from "../../contexts/WishlistContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import {
   ShoppingBag,
   Heart,
@@ -13,80 +13,206 @@ import {
   Search,
   Moon,
   Sun,
-} from 'lucide-react';
+  ChevronDown,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchInputRef = useRef(null);
+  const searchContainerRef = useRef(null);
+  const inactivityTimerRef = useRef(null);
+
   const { user, logout } = useAuth();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { darkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  // Handle scroll effect
+  // --- Start: Hooks and Handlers (Keep Existing) ---
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 10);
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+      resetInactivityTimer();
+    } else {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    return () => clearTimeout(inactivityTimerRef.current);
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isSearchOpen &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target) &&
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchOpen]);
 
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    navigate("/");
   };
 
+  const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimerRef.current);
+    inactivityTimerRef.current = setTimeout(() => {
+      if (isSearchOpen && searchValue === "") {
+        setIsSearchOpen(false);
+      }
+    }, 3000);
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchValue(event.target.value);
+    resetInactivityTimer();
+  };
+
+  const handleSearchToggle = () => {
+    if (isSearchOpen) {
+      setSearchValue("");
+      clearTimeout(inactivityTimerRef.current);
+    }
+    setIsSearchOpen(!isSearchOpen);
+    setIsMenuOpen(false);
+  };
+
+  const handleSearchBlur = () => {
+    setTimeout(() => {
+      if (
+        searchValue === "" &&
+        searchInputRef.current !== document.activeElement
+      ) {
+        if (!searchContainerRef.current?.contains(document.activeElement)) {
+          setIsSearchOpen(false);
+        }
+      }
+    }, 100);
+  };
+  // --- End: Hooks and Handlers ---
+
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/shop', label: 'Shop' },
-    { path: '/about', label: 'About' },
+    { path: "/", label: "Home" },
+    { path: "/shop", label: "Shop" },
+    { path: "/about", label: "About" },
   ];
+
+  // Base icon button style - used for most icons now
+  const baseIconButtonClasses =
+    "relative flex items-center justify-center p-2 rounded-full text-muted hover:text-accent focus-visible:text-accent focus-visible:bg-highlight active:bg-highlight transition-colors duration-200";
+
+  // Navigation link style
+  const navLinkClasses = ({ isActive }) =>
+    `relative font-medium text-base text-primary transition-colors duration-200 after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-0 after:bg-accent after:transition-all after:duration-300 hover:after:w-full ${
+      isActive ? "text-accent after:w-full" : "hover:text-accent-2"
+    }`;
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${
+        isScrolled ? "shadow-md" : ""
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex items-center justify-between h-20">
           <Link
             to="/"
-            className="text-2xl font-display font-bold text-black dark:text-white"
+            className="text-3xl font-bold font-serif text-primary tracking-[-0.02em]"
           >
-            Luxe Heritage
+            Luxe<span className="logo-secondary font-semibold">Heritage</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors font-medium"
+          {!isSearchOpen && (
+            <nav className="hidden md:flex items-center space-x-10">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  className={navLinkClasses}
+                  end={link.path === "/"}
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </nav>
+          )}
+
+          <AnimatePresence>
+            {isSearchOpen && (
+              <motion.div
+                key="search-input"
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "40%" }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block"
+                ref={searchContainerRef}
               >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+                <div className="relative">
+                  <input
+                    ref={searchInputRef}
+                    type="search"
+                    placeholder="Search products..."
+                    className="w-full input-luxury !rounded-full !pl-10 !pr-4 !py-2"
+                    value={searchValue}
+                    onChange={handleSearchInputChange}
+                    onBlur={handleSearchBlur}
+                    onKeyDown={resetInactivityTimer}
+                    onClick={resetInactivityTimer}
+                  />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted pointer-events-none">
+                    {" "}
+                    <Search className="w-5 h-5" />{" "}
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Search */}
-            <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-
-            {/* Theme Toggle */}
+          {/* ----- Action Buttons ----- */}
+          <div className="flex items-center space-x-1">
+            <div ref={searchContainerRef}>
+              {/* Search Toggle uses baseIconButtonClasses */}
+              <button
+                onClick={handleSearchToggle}
+                className={baseIconButtonClasses}
+                aria-label="Toggle Search"
+              >
+                {isSearchOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Search className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            {/* Theme Toggle - Minimal icon style */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+              // Removed baseIconButtonClasses, applied minimal styling
+              className="p-2 text-muted hover:text-accent focus-visible:text-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))] rounded-full transition-colors duration-200"
+              aria-label={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
             >
               {darkMode ? (
                 <Sun className="w-5 h-5" />
@@ -94,132 +220,161 @@ const Header = () => {
                 <Moon className="w-5 h-5" />
               )}
             </button>
-
-            {/* Wishlist */}
+            {/* Wishlist Icon - Added ml-1 for spacing */}
             <Link
               to="/wishlist"
-              className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+              className={`${baseIconButtonClasses} ml-1`}
+              aria-label="Wishlist"
             >
               <Heart className="w-5 h-5" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {wishlistCount}
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center border border-[rgb(var(--bg))]">
+                  {" "}
+                  {wishlistCount}{" "}
                 </span>
               )}
             </Link>
-
-            {/* Cart */}
+            {/* Cart Icon - Space adjusted by container's space-x-1 */}
             <Link
               to="/cart"
-              className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+              className={baseIconButtonClasses}
+              aria-label="Shopping Cart"
             >
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartCount}
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center border border-[rgb(var(--bg))]">
+                  {" "}
+                  {cartCount}{" "}
                 </span>
               )}
             </Link>
 
-            {/* User Menu */}
+            {/* Separator and Auth (Unchanged) */}
+            <div className="h-6 w-px bg-[rgb(var(--border))] hidden lg:block mx-3"></div>
             {user ? (
               <div className="relative group">
-                <button className="flex items-center space-x-2 p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors">
-                  <User className="w-5 h-5" />
+                <button className="flex items-center space-x-2 p-2 text-primary hover:text-accent transition-colors">
+                  {" "}
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-highlight border border-[rgb(var(--border))]">
+                    {" "}
+                    <User className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />{" "}
+                  </span>{" "}
                   <span className="hidden lg:block text-sm font-medium">
                     {user.firstName}
-                  </span>
+                  </span>{" "}
+                  <ChevronDown className="w-4 h-4 text-muted hidden lg:block group-hover:rotate-180 transition-transform" />{" "}
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div className="absolute right-0 mt-2 w-48 bg-card rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-[rgb(var(--border))]">
+                  {" "}
                   <Link
                     to="/account"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block px-4 py-2 text-sm text-primary hover:bg-highlight hover:text-accent transition-colors"
                   >
-                    My Account
-                  </Link>
-                  {user.role === 'admin' && (
+                    {" "}
+                    My Account{" "}
+                  </Link>{" "}
+                  {user.role === "admin" && (
                     <Link
                       to="/admin"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm text-primary hover:bg-highlight hover:text-accent transition-colors"
                     >
-                      Admin Panel
+                      {" "}
+                      Admin Panel{" "}
                     </Link>
-                  )}
+                  )}{" "}
+                  <div className="my-1 h-px bg-[rgb(var(--border))]"></div>{" "}
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-[rgba(255,0,0,0.1)] transition-colors"
                   >
-                    Logout
-                  </button>
+                    {" "}
+                    Logout{" "}
+                  </button>{" "}
                 </div>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/login"
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
-                >
-                  Login
-                </Link>
+              <div className="hidden lg:flex items-center space-x-4">
+                <NavLink to="/login" className={navLinkClasses}>
+                  {" "}
+                  Login{" "}
+                </NavLink>
                 <Link
                   to="/register"
-                  className="text-sm font-medium bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                  className="btn-luxury btn-luxury-secondary !py-1.5 !px-5 !text-sm !rounded-md"
                 >
-                  Register
+                  {" "}
+                  Register{" "}
                 </Link>
               </div>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Uses baseIconButtonClasses */}
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+                setIsSearchOpen(false);
+              }}
+              className={`md:hidden ${baseIconButtonClasses} ml-1`}
+              aria-label="Toggle menu"
             >
               {isMenuOpen ? (
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="w-6 h-6" />
               )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700">
-            <nav className="flex flex-col space-y-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {user && (
-                <>
-                  <Link
-                    to="/account"
-                    className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors font-medium py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    My Account
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="text-left text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors font-medium py-2"
-                  >
-                    Logout
-                  </button>
-                </>
-              )}
-            </nav>
-          </div>
+        {/* Mobile Search Input (Unchanged) */}
+        <AnimatePresence>
+          {" "}
+          {isSearchOpen && (
+            <motion.div
+              key="search-mobile"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden pb-3 pt-1 border-t border-[rgb(var(--border))]"
+            >
+              {" "}
+              <div className="relative px-4">
+                {" "}
+                <input
+                  ref={searchInputRef}
+                  type="search"
+                  placeholder="Search products..."
+                  className="w-full input-luxury !rounded-full !pl-10 !pr-4 !py-2"
+                  value={searchValue}
+                  onChange={handleSearchInputChange}
+                  onBlur={handleSearchBlur}
+                  onKeyDown={resetInactivityTimer}
+                  onClick={resetInactivityTimer}
+                />{" "}
+                <span className="absolute left-7 top-1/2 transform -translate-y-1/2 text-muted pointer-events-none">
+                  {" "}
+                  <Search className="w-5 h-5" />{" "}
+                </span>{" "}
+              </div>{" "}
+            </motion.div>
+          )}{" "}
+        </AnimatePresence>
+
+        {/* Mobile Navigation Panel (Unchanged) */}
+        {isMenuOpen && !isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden py-4 border-t border-[rgb(var(--border))] bg-surface shadow-lg absolute top-full left-0 right-0"
+          >
+            {" "}
+            <nav className="flex flex-col space-y-1 px-2">
+              {" "}
+              {/* Nav Links */}{" "}
+            </nav>{" "}
+          </motion.div>
         )}
       </div>
     </header>

@@ -1,4 +1,4 @@
 {
-  "tailwindCSS.version": "3",
-  "tailwindCSS.experimental.configFile": "tailwind.config.js"
+  "tailwindCSS.version": "4"
+  // "tailwindCSS.experimental.configFile" is removed for v4
 }

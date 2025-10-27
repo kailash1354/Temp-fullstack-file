@@ -1,11 +1,6 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
-const Pagination = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-  showEdges = true,
-}) => {
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
   const generatePageNumbers = () => {
@@ -13,16 +8,12 @@ const Pagination = ({
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is less than max visible
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
-
       let startPage, endPage;
-
       if (currentPage <= 3) {
         startPage = 2;
         endPage = 4;
@@ -33,30 +24,21 @@ const Pagination = ({
         startPage = currentPage - 1;
         endPage = currentPage + 1;
       }
-
-      // Add ellipsis if needed
       if (startPage > 2) {
         pages.push("...");
       }
-
-      // Add middle pages
       for (let i = startPage; i <= endPage; i++) {
         if (i > 1 && i < totalPages) {
           pages.push(i);
         }
       }
-
-      // Add ellipsis if needed
       if (endPage < totalPages - 1) {
         pages.push("...");
       }
-
-      // Always show last page
       if (totalPages > 1) {
         pages.push(totalPages);
       }
     }
-
     return pages;
   };
 
@@ -81,16 +63,18 @@ const Pagination = ({
   };
 
   return (
-    <nav className="flex items-center justify-between" aria-label="Pagination">
+    <nav
+      className="flex items-center justify-between text-primary"
+      aria-label="Pagination"
+    >
       <div className="flex items-center space-x-3">
-        {/* Previous Button */}
         <button
           onClick={handlePrevious}
           disabled={currentPage === 1}
           className={`inline-flex items-center px-5 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
             currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105"
+              ? "text-muted cursor-not-allowed"
+              : "text-primary hover:bg-highlight hover:scale-105"
           }`}
           aria-label="Previous page"
         >
@@ -98,7 +82,6 @@ const Pagination = ({
           Previous
         </button>
 
-        {/* Page Numbers */}
         <div className="hidden sm:flex items-center space-x-2">
           {pageNumbers.map((page, index) => (
             <button
@@ -107,10 +90,10 @@ const Pagination = ({
               disabled={page === "..."}
               className={`px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
                 page === currentPage
-                  ? "bg-luxury-gold text-white shadow-lg scale-110"
+                  ? "bg-accent text-white shadow-lg scale-110"
                   : page === "..."
-                  ? "text-gray-400 cursor-default"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105"
+                  ? "text-muted cursor-default"
+                  : "text-primary hover:bg-highlight hover:scale-105"
               }`}
               aria-current={page === currentPage ? "page" : undefined}
               aria-label={page === "..." ? "More pages" : `Page ${page}`}
@@ -120,14 +103,13 @@ const Pagination = ({
           ))}
         </div>
 
-        {/* Next Button */}
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages}
           className={`inline-flex items-center px-5 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
             currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105"
+              ? "text-muted cursor-not-allowed"
+              : "text-primary hover:bg-highlight hover:scale-105"
           }`}
           aria-label="Next page"
         >
@@ -136,19 +118,17 @@ const Pagination = ({
         </button>
       </div>
 
-      {/* Page Info */}
-      <div className="hidden sm:flex items-center text-sm text-gray-700 dark:text-gray-300">
+      <div className="hidden sm:flex items-center text-sm text-primary">
         <span>
           Page {currentPage} of {totalPages}
         </span>
         {totalPages > 1 && (
-          <span className="ml-3 text-gray-500">({totalPages} total pages)</span>
+          <span className="ml-3 text-muted">({totalPages} total pages)</span>
         )}
       </div>
 
-      {/* Mobile Pagination */}
       <div className="sm:hidden flex items-center space-x-3">
-        <span className="text-sm text-gray-700 dark:text-gray-300">
+        <span className="text-sm text-primary">
           {currentPage} / {totalPages}
         </span>
       </div>

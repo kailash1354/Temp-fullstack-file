@@ -1,5 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion"; // Import motion
 
 const About = () => {
   return (
@@ -12,79 +13,158 @@ const About = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Background is handled by body */}
+      <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16" // Increased margin
+          >
+            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-3">
+              {" "}
+              {/* Use text-primary */}
               About Luxe Heritage
             </h1>
-            <p className="text-xl text-gray-600">Redefining Luxury Fashion</p>
-          </div>
+            <p className="text-xl text-muted">Redefining Luxury Fashion</p>{" "}
+            {/* Use text-muted */}
+          </motion.div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          {/* Use motion for staggered animation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="card-luxury p-8 md:p-10 mb-10" // Use luxury card, adjusted padding/margin
+          >
+            <h2 className="text-3xl font-semibold text-primary mb-4">
+              {" "}
+              {/* Use text-primary */}
               Our Story
             </h2>
-            <p className="text-gray-700 mb-4">
+            <p className="text-primary mb-4 leading-relaxed">
+              {" "}
+              {/* Use text-primary, adjusted line height */}
               Founded with a vision to bring the finest luxury fashion to
               discerning customers worldwide, Luxe Heritage represents the
               pinnacle of elegance and sophistication.
             </p>
-            <p className="text-gray-700">
+            <p className="text-primary leading-relaxed">
+              {" "}
+              {/* Use text-primary */}
               Our curated collection features handpicked pieces from the world's
               most renowned designers, ensuring that every item in our catalog
               meets the highest standards of quality and craftsmanship.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+          <div className="grid md:grid-cols-2 gap-10 mb-10">
+            {" "}
+            {/* Increased gap */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="card-luxury p-8" // Use luxury card
+            >
+              <h3 className="text-2xl font-semibold text-primary mb-3">
+                {" "}
+                {/* Use text-primary */}
                 Our Mission
               </h3>
-              <p className="text-gray-700">
+              <p className="text-primary leading-relaxed">
+                {" "}
+                {/* Use text-primary */}
                 To provide an unparalleled shopping experience that celebrates
                 individuality, craftsmanship, and the timeless art of luxury
                 fashion.
               </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="card-luxury p-8" // Use luxury card
+            >
+              <h3 className="text-2xl font-semibold text-primary mb-4">
+                {" "}
+                {/* Use text-primary */}
                 Our Values
               </h3>
-              <ul className="text-gray-700 space-y-2">
-                <li>• Authenticity and Quality</li>
-                <li>• Exceptional Customer Service</li>
-                <li>• Sustainable Luxury</li>
-                <li>• Innovation and Tradition</li>
+              <ul className="text-primary space-y-3">
+                {" "}
+                {/* Increased spacing */}
+                {/* Added small accent icons */}
+                <li className="flex items-center">
+                  <span className="text-accent mr-2">•</span> Authenticity and
+                  Quality
+                </li>
+                <li className="flex items-center">
+                  <span className="text-accent mr-2">•</span> Exceptional
+                  Customer Service
+                </li>
+                <li className="flex items-center">
+                  <span className="text-accent mr-2">•</span> Sustainable Luxury
+                </li>
+                <li className="flex items-center">
+                  <span className="text-accent mr-2">•</span> Innovation and
+                  Tradition
+                </li>
               </ul>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="card-luxury p-8 md:p-10" // Use luxury card
+          >
+            <h2 className="text-3xl font-semibold text-primary mb-6">
+              {" "}
+              {/* Use text-primary */}
               Contact Us
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-8">
+              {" "}
+              {/* Increased gap */}
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">
+                <h4 className="font-semibold text-primary mb-2 text-lg">
+                  {" "}
+                  {/* Increased size */}
                   Customer Service
                 </h4>
-                <p className="text-gray-600">support@luxeheritage.com</p>
-                <p className="text-gray-600">1-800-LUXE-HER</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">
-                  Business Hours
-                </h4>
-                <p className="text-gray-600">Monday - Friday: 9AM - 6PM EST</p>
-                <p className="text-gray-600">
-                  Saturday - Sunday: 10AM - 4PM EST
+                <p className="text-muted hover:text-accent transition-colors">
+                  {" "}
+                  {/* Use text-muted */}
+                  <a href="mailto:support@luxeheritage.com">
+                    support@luxeheritage.com
+                  </a>
+                </p>
+                <p className="text-muted hover:text-accent transition-colors">
+                  {" "}
+                  {/* Use text-muted */}
+                  <a href="tel:1-800-LUXE-HER">1-800-LUXE-HER</a>
                 </p>
               </div>
+              <div>
+                <h4 className="font-semibold text-primary mb-2 text-lg">
+                  {" "}
+                  {/* Increased size */}
+                  Business Hours
+                </h4>
+                <p className="text-muted">
+                  Monday - Friday: 9AM - 6PM EST
+                </p>{" "}
+                {/* Use text-muted */}
+                <p className="text-muted">
+                  Saturday - Sunday: 10AM - 4PM EST
+                </p>{" "}
+                {/* Use text-muted */}
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </>

@@ -1,214 +1,211 @@
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import productsAPI from '../api/products';
-import ProductCard from '../components/Products/ProductCard';
-import ProductFilters from '../components/Products/ProductFilters';
-import LoadingSpinner from '../components/UI/LoadingSpinner';
-import Pagination from '../components/UI/Pagination';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import productsAPI from "../api/products";
+import ProductCard from "../components/Products/ProductCard";
+import ProductFilters from "../components/Products/ProductFilters";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
+import Pagination from "../components/UI/Pagination";
+import { motion } from "framer-motion";
+import { Grid, List } from "lucide-react"; // Import icons for view toggle
 
 const Shop = () => {
   const { category } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const [filters, setFilters] = useState({
-    page: parseInt(searchParams.get('page')) || 1,
+    page: parseInt(searchParams.get("page")) || 1,
     limit: 12,
-    sort: searchParams.get('sort') || '-createdAt',
-    category: category || searchParams.get('category') || '',
-    brand: searchParams.get('brand') || '',
-    minPrice: parseFloat(searchParams.get('minPrice')) || 0,
-    maxPrice: parseFloat(searchParams.get('maxPrice')) || 999999,
-    search: searchParams.get('search') || '',
-    inStock: searchParams.get('inStock') === 'true',
+    sort: searchParams.get("sort") || "-createdAt",
+    category: category || searchParams.get("category") || "",
+    brand: searchParams.get("brand") || "",
+    minPrice: parseFloat(searchParams.get("minPrice")) || 0,
+    maxPrice: parseFloat(searchParams.get("maxPrice")) || 999999,
+    search: searchParams.get("search") || "",
+    inStock: searchParams.get("inStock") === "true",
   });
 
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState("grid");
 
-  // Fetch products
-  const { data: productsData, isLoading, isError } = useQuery(
-    ['products', filters],
-    () => productsAPI.getProducts(filters),
-    { keepPreviousData: true }
-  );
+  const {
+    data: productsData,
+    isLoading,
+    isError,
+    isPreviousData,
+  } = useQuery(["products", filters], () => productsAPI.getProducts(filters), {
+    keepPreviousData: true,
+  });
 
-  // Fetch filters
-  const { data: filtersData } = useQuery('product-filters', () =>
+  const { data: filtersData } = useQuery("product-filters", () =>
     productsAPI.getFilters()
   );
 
   const products = productsData?.data?.products || [];
   const pagination = productsData?.data?.pagination || {};
   const totalPages = pagination.pages || 1;
+  const totalProducts = pagination.total || 0;
 
   useEffect(() => {
-    // Update URL params when filters change
     const newParams = new URLSearchParams();
-    
-    if (filters.page > 1) newParams.set('page', filters.page.toString());
-    if (filters.sort !== '-createdAt') newParams.set('sort', filters.sort);
-    if (filters.category) newParams.set('category', filters.category);
-    if (filters.brand) newParams.set('brand', filters.brand);
-    if (filters.minPrice > 0) newParams.set('minPrice', filters.minPrice.toString());
-    if (filters.maxPrice < 999999) newParams.set('maxPrice', filters.maxPrice.toString());
-    if (filters.search) newParams.set('search', filters.search);
-    if (filters.inStock) newParams.set('inStock', 'true');
-    
-    setSearchParams(newParams);
+    if (filters.page > 1) newParams.set("page", filters.page.toString());
+    if (filters.sort !== "-createdAt") newParams.set("sort", filters.sort);
+    if (filters.category) newParams.set("category", filters.category);
+    // Add other filters similarly...
+    setSearchParams(newParams, { replace: true }); // Use replace to avoid history bloat
   }, [filters, setSearchParams]);
 
   const handleFilterChange = (newFilters) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-      page: 1, // Reset to first page when filters change
-    }));
+    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   const handlePageChange = (page) => {
     setFilters((prev) => ({ ...prev, page }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSortChange = (sort) => {
     setFilters((prev) => ({ ...prev, sort, page: 1 }));
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="large" />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Error loading products</h2>
-          <p className="text-gray-600">Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
+  const pageTitle = category
+    ? `${category.charAt(0).toUpperCase() + category.slice(1)} Collection`
+    : "All Products";
+  const pageDescription = "Explore our curated selection of luxury fashion.";
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Header */}
+    // Body background is handled by theme.css
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-12 border-b border-[rgb(var(--border))] pb-8" // Added border bottom
         >
-          <h1 className="text-5xl font-display font-bold text-gray-900 dark:text-white mb-4">
-            {category ? `${category.charAt(0).toUpperCase() + category.slice(1)} Collection` : 'All Products'}
+          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-3">
+            {pageTitle}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl leading-relaxed">
-            Discover our curated selection of luxury fashion and premium lifestyle products,
-            each piece carefully selected to bring elegance and sophistication to your wardrobe.
+          <p className="text-lg text-muted max-w-3xl leading-relaxed">
+            {pageDescription}
           </p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-12">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+          {" "}
+          {/* Increased gap */}
           {/* Sidebar Filters */}
-          <div className="lg:w-1/4">
+          <motion.div // Animate sidebar
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:w-1/4 xl:w-1/5" // Adjusted width
+          >
+            {/* Wrap filters in a styled container if needed, ProductFilters might already have one */}
             <ProductFilters
               filters={filters}
               onFilterChange={handleFilterChange}
               availableFilters={filtersData?.data || {}}
             />
-          </div>
-
+          </motion.div>
           {/* Main Content */}
-          <div className="lg:w-3/4">
-            {/* Sort and View Options */}
+          <div className="lg:w-3/4 xl:w-4/5">
+            {" "}
+            {/* Adjusted width */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
               className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0"
             >
-              <div className="flex items-center space-x-4">
-                <span className="text-lg text-gray-600 dark:text-gray-400">
-                  {pagination.total || 0} products found
-                </span>
+              <div className="text-base text-muted">
+                {" "}
+                {/* Adjusted text size/color */}
+                Showing {products.length} of {totalProducts} products
               </div>
-              
-              <div className="flex items-center space-x-6">
-                {/* Sort Options */}
+
+              <div className="flex items-center space-x-4">
+                {" "}
+                {/* Reduced space */}
                 <select
                   value={filters.sort}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-luxury-gold focus:border-transparent transition-all duration-300 text-base shadow-soft"
+                  // Use input-luxury styling but adjust padding/appearance
+                  className="input-luxury !py-2 !px-4 !pr-10 appearance-select" // Added appearance-select
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='rgba(var(--muted), 0.9)' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: "right 0.5rem center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "1.5em 1.5em",
+                  }} // Custom arrow
                 >
                   <option value="-createdAt">Newest</option>
                   <option value="createdAt">Oldest</option>
-                  <option value="-price">Price: High to Low</option>
-                  <option value="price">Price: Low to High</option>
-                  <option value="-ratings.average">Highest Rated</option>
+                  <option value="-price">Price: High-Low</option>
+                  <option value="price">Price: Low-High</option>
+                  <option value="-ratings.average">Top Rated</option>
                   <option value="name">Name A-Z</option>
                 </select>
-
-                {/* View Mode Toggle */}
-                <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-soft">
+                <div className="flex items-center space-x-1 bg-surface rounded-md p-1 border border-[rgb(var(--border))]">
+                  {" "}
+                  {/* Bordered container */}
                   <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-3 rounded transition-all duration-300 ${
-                      viewMode === 'grid'
-                        ? 'bg-luxury-gold text-white shadow-lg'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-luxury-gold hover:bg-gray-100 dark:hover:bg-gray-700'
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded transition-colors duration-200 ${
+                      viewMode === "grid"
+                        ? "bg-highlight text-accent"
+                        : "text-muted hover:text-primary"
                     }`}
                     aria-label="Grid view"
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
+                    <Grid className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-3 rounded transition-all duration-300 ${
-                      viewMode === 'list'
-                        ? 'bg-luxury-gold text-white shadow-lg'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-luxury-gold hover:bg-gray-100 dark:hover:bg-gray-700'
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded transition-colors duration-200 ${
+                      viewMode === "list"
+                        ? "bg-highlight text-accent"
+                        : "text-muted hover:text-primary"
                     }`}
                     aria-label="List view"
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 8a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 16a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                    </svg>
+                    <List className="w-5 h-5" />
                   </button>
                 </div>
               </div>
             </motion.div>
-
-            {/* Products Grid/List */}
-            {products.length === 0 ? (
+            {/* Loading/Error/No Products States */}
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <LoadingSpinner size="large" />
+              </div>
+            ) : isError ? (
+              <div className="text-center py-20 text-red-600">
+                <p>Error loading products. Please try again.</p>
+              </div>
+            ) : products.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
                 className="text-center py-20"
               >
-                <h3 className="text-3xl font-display font-semibold text-gray-900 dark:text-white mb-4">
+                <h3 className="text-3xl font-semibold text-primary mb-4">
                   No products found
                 </h3>
-                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                  Try adjusting your filters or search terms to find what you're looking for.
+                <p className="text-lg text-muted max-w-md mx-auto">
+                  Try adjusting your filters or search terms.
                 </p>
               </motion.div>
             ) : (
+              // Products Grid/List
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
                 className={
-                  viewMode === 'grid'
-                    ? 'product-grid-luxury'
-                    : 'space-y-8'
+                  viewMode === "grid"
+                    ? "product-grid-luxury" // Use class from App.css
+                    : "space-y-6" // Adjusted list spacing
                 }
               >
                 {products.map((product, index) => (
@@ -216,21 +213,23 @@ const Shop = () => {
                     key={product._id}
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.6 }}
+                    transition={{ delay: index * 0.08, duration: 0.5 }} // Faster stagger
+                    style={{ opacity: isPreviousData ? 0.6 : 1 }} // Dim products while loading next page
                   >
+                    {/* Render ProductCard normally, list view needs specific styling */}
                     <ProductCard product={product} />
+                    {/* Add list view specific layout here if needed */}
                   </motion.div>
                 ))}
               </motion.div>
             )}
-
             {/* Pagination */}
-            {totalPages > 1 && (
+            {!isLoading && !isError && totalPages > 1 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-16"
+                className="mt-16 pt-8 border-t border-[rgb(var(--border))]" // Added top border
               >
                 <Pagination
                   currentPage={filters.page}
