@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import Grid from "@mui/material/Grid"; // *** CORRECT IMPORT PATH ***
+import Grid from "@mui/material/Grid";
 import { Box, Typography } from "@mui/material";
 import {
   DollarSign,
@@ -23,7 +23,7 @@ import CategoryPieChart from "./admincomponents/CategoryPieChart";
 import DailyOrdersBarChart from "./admincomponents/DailyOrdersBarChart";
 import PeakTimeGrid from "./admincomponents/PeakTimeGrid";
 
-// Placeholder Data
+// Placeholder Data (Keep as is)
 const statsData = [
   {
     title: "Total Revenue",
@@ -67,8 +67,7 @@ const Dashboard = () => {
   return (
     <>
       <Helmet>
-        {" "}
-        <title>Admin Dashboard - Luxe Heritage</title>{" "}
+        <title>Admin Dashboard - Luxe Heritage</title>
       </Helmet>
 
       <motion.div
@@ -102,7 +101,6 @@ const Dashboard = () => {
             </Typography>
           </Box>
           <Box sx={{ display: "flex", gap: 1.5, mt: { xs: 2, md: 0 } }}>
-            {/* Use the main site's gold button class */}
             <button className="btn-luxury-primary !py-2 !px-4 !text-sm inline-flex items-center space-x-1.5">
               <Download className="w-4 h-4" /> <span>Export Report</span>
             </button>
@@ -128,9 +126,13 @@ const Dashboard = () => {
           ))}
         </Grid>
 
-        {/* Sales Chart / Top Products Row (from first screenshot) */}
+        {/* ========================================================= */}
+        {/* ROW 2: SALES CHART (lg=6) | TOP PRODUCTS (lg=3) | CATEGORY PIE (lg=3) */}
+        {/* New arrangement to maximize space and place Pie next to List */}
+        {/* ========================================================= */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid xs={12} lg={8}>
+          {/* Sales Chart: Takes 6/12 width (wider) */}
+          <Grid xs={12} lg={6}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -140,7 +142,8 @@ const Dashboard = () => {
               <SalesLineChart />
             </motion.div>
           </Grid>
-          <Grid xs={12} lg={4}>
+          {/* Top Products List: Takes 3/12 width */}
+          <Grid xs={12} lg={3}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -150,15 +153,29 @@ const Dashboard = () => {
               <TopProductsList />
             </motion.div>
           </Grid>
+          {/* Sales by Category Pie Chart: Takes 3/12 width */}
+          <Grid xs={12} lg={3}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              style={{ height: "100%" }}
+            >
+              <CategoryPieChart />
+            </motion.div>
+          </Grid>
         </Grid>
 
-        {/* Recent Orders / Quick Actions Row (from second screenshot) */}
+        {/* ========================================================= */}
+        {/* ROW 3: RECENT ORDERS (lg=8) | QUICK ACTIONS (lg=4) */}
+        {/* Status Quo for Orders and Quick Actions */}
+        {/* ========================================================= */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid xs={12} lg={8}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
               style={{ height: "100%" }}
             >
               <RecentOrders />
@@ -168,7 +185,7 @@ const Dashboard = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
               style={{ height: "100%" }}
             >
               <QuickActions />
@@ -176,18 +193,11 @@ const Dashboard = () => {
           </Grid>
         </Grid>
 
-        {/* Other charts from MUI-X screenshot (Optional) */}
+        {/* ========================================================= */}
+        {/* ROW 4: DAILY ORDERS (lg=8) | PEAK TIME (lg=4) */}
+        {/* Uses 8/12 and 4/12 for remaining chart space */}
+        {/* ========================================================= */}
         <Grid container spacing={3}>
-          <Grid xs={12} lg={4}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              style={{ height: "100%" }}
-            >
-              <CategoryPieChart />
-            </motion.div>
-          </Grid>
           <Grid xs={12} lg={8}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
